@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package proto3;
+
+option java_package = "com.spotify.test.protobuf4.proto3";
+
+message TestRecord {
+  int64 id = 1;
+}
