@@ -3,13 +3,15 @@ package com.spotify.test
 import com.google.protobuf.Message
 import org.apache.beam.sdk.extensions.protobuf.ProtoCoder
 import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import com.spotify.test.protobuf2.proto2.{RecordProto2Syntax => protobuf2_proto2syntax}
 import com.spotify.test.protobuf3.proto3.{RecordProto3Syntax => protobuf3_proto2syntax}
 import com.spotify.test.protobuf3.proto3.{RecordProto3Syntax => protobuf3_proto3syntax}
 import com.spotify.test.protobuf4.proto3.{RecordProto3Syntax => protobuf4_proto3syntax}
 import org.apache.beam.sdk.coders.Coder
 import org.apache.beam.sdk.util.CoderUtils
 
-class TestSerialization extends AnyFlatSpec {
+class TestSerialization extends AnyFlatSpec with Matchers {
 
   def roundtrip[T <: Message](t: T, coder: Coder[T]): T =
     CoderUtils.decodeFromByteArray(coder, CoderUtils.encodeToByteArray(coder, t))
@@ -38,6 +40,7 @@ class TestSerialization extends AnyFlatSpec {
     assert(roundtrip(message, protobufCoder) == message)
   }
 
+  // Result: SUCCEEDS
   it should "be able to serialize and deserialize Protobuf classes generated generated with Protoc 4 using proto3 syntax" in {
     val protobufCoder = ProtoCoder.of(classOf[protobuf4_proto3syntax.TestRecord])
 
@@ -47,6 +50,21 @@ class TestSerialization extends AnyFlatSpec {
       .build()
 
     assert(roundtrip(message, protobufCoder) == message)
+  }
+
+
+  // Result: FAILS
+  it should "be able to serialize and deserialize Protobuf classes generated with Protoc 2 using proto2 syntax" in {
+    val protobufCoder = ProtoCoder.of(classOf[protobuf2_proto2syntax.TestRecord])
+
+    val message = protobuf2_proto2syntax.TestRecord
+      .newBuilder()
+      .setId(1L)
+      .build()
+
+    noException shouldBe thrownBy {
+      assert(roundtrip(message, protobufCoder) == message)
+    }
   }
 
   // Result: FAILS
@@ -71,6 +89,8 @@ class TestSerialization extends AnyFlatSpec {
       .setFeatures(features)
       .build()
 
-    assert(roundtrip(message, protobufCoder) == message)
+    noException shouldBe thrownBy {
+      assert(roundtrip(message, protobufCoder) == message)
+    }
   }
 }

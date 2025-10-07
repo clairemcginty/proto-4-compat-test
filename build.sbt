@@ -19,23 +19,26 @@ val commonSettings = Seq(
 lazy val root = project
   .in(file("."))
   .aggregate(
-    //`schemas-proto-2`, // Todo - can't run on m1
+    `schemas-proto-2`,
     `schemas-proto-3`,
     `schemas-proto-4`,
     `test-serialization-protobuf-java-3`,
     `test-serialization-protobuf-java-4`
   )
 
-/*lazy val `schemas-proto-2` = project
+lazy val `schemas-proto-2` = project
   .in(file("schemas-proto-2"))
+  .settings(commonSettings)
   .settings(
     ProtobufConfig / version := Protobuf2Version,
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % Protobuf2Version
   )
-  .enablePlugins(ProtobufPlugin)*/
+  // No aarch-compat protoc for 2.x -- worked around by manually generating via protoc and checking into unmanaged source
+  //.enablePlugins(ProtobufPlugin)
 
 lazy val `schemas-proto-3` = project
   .in(file("schemas-proto-3"))
+  .settings(commonSettings)
   .settings(
     ProtobufConfig / version := Protobuf3Version,
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % Protobuf3Version
@@ -44,6 +47,7 @@ lazy val `schemas-proto-3` = project
 
 lazy val `schemas-proto-4` = project
   .in(file("schemas-proto-4"))
+  .settings(commonSettings)
   .settings(
     ProtobufConfig / version := Protobuf4Version,
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % Protobuf4Version
@@ -52,6 +56,7 @@ lazy val `schemas-proto-4` = project
 
 lazy val `test-serialization-protobuf-java-3` = project
   .in(file("test-serialization-protobuf-java-3"))
+  .settings(commonSettings)
   .settings(
     dependencyOverrides += "com.google.protobuf" % "protobuf-java" % Protobuf3Version,
     libraryDependencies ++= Seq(
@@ -62,11 +67,11 @@ lazy val `test-serialization-protobuf-java-3` = project
       "org.scalatest" %% "scalatest" % ScalatestVersion % Test
     )
   )
-  .enablePlugins(ProtobufPlugin)
-  .dependsOn(`schemas-proto-3`, `schemas-proto-4`)
+  .dependsOn(`schemas-proto-2`, `schemas-proto-3`, `schemas-proto-4`)
 
 lazy val `test-serialization-protobuf-java-4` = project
   .in(file("test-serialization-protobuf-java-4"))
+  .settings(commonSettings)
   .settings(
     dependencyOverrides += "com.google.protobuf" % "protobuf-java" % Protobuf4Version,
     libraryDependencies ++= Seq(
@@ -77,5 +82,4 @@ lazy val `test-serialization-protobuf-java-4` = project
       "org.scalatest" %% "scalatest" % ScalatestVersion % Test
     )
   )
-  .enablePlugins(ProtobufPlugin)
-  .dependsOn(`schemas-proto-3`, `schemas-proto-4`)
+  .dependsOn(`schemas-proto-2`, `schemas-proto-3`, `schemas-proto-4`)
