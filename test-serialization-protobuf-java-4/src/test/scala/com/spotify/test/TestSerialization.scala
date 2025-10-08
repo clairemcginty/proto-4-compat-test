@@ -1,6 +1,6 @@
 package com.spotify.test
 
-import com.google.protobuf.Message
+import com.google.protobuf.{ByteString, Message}
 import org.apache.beam.sdk.extensions.protobuf.ProtoCoder
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -70,7 +70,7 @@ class TestSerialization extends AnyFlatSpec with Matchers {
   // Result: FAILS
   it should "be able to serialize and deserialize Tensorflow-core protobuf classes (generated with protoc 2 maybe?)" in {
     // Hypothesis: generated with protoc 2?
-    import org.tensorflow.proto.example.{Example, Feature, Features, Int64List}
+    import org.tensorflow.proto.example.{BytesList, Example, Feature, Features, FloatList, Int64List}
 
     val protobufCoder = ProtoCoder.of(classOf[Example])
 
@@ -81,6 +81,8 @@ class TestSerialization extends AnyFlatSpec with Matchers {
         Feature
           .newBuilder()
           .setInt64List(Int64List.newBuilder().addValue(1))
+          .setBytesList(BytesList.newBuilder().addValue(ByteString.copyFromUtf8("foo")))
+          .setFloatList(FloatList.newBuilder().addValue(1F))
           .build()
       )
 
