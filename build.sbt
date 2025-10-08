@@ -4,7 +4,7 @@ import sbtprotobuf.ProtobufPlugin
 
 lazy val Protobuf2Version = "2.6.1"
 lazy val Protobuf3Version = "3.25.5"
-lazy val Protobuf4Version = "4.32.1"
+lazy val Protobuf4Version = "4.33.0-RC1"
 lazy val BeamVersion = "2.68.0"
 lazy val TensorflowVersion = "0.4.2"
 lazy val ScalatestVersion = "3.2.19"
